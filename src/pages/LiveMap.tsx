@@ -21,7 +21,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Switch } from "@/components/ui/switch"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import type { Level, Vehicle } from "@/data/types"
+import type { Level, Point, Vehicle } from "@/data/types"
 import { ORDER_STATUS } from "@/lib/orders"
 import {
   LEVEL_RANK,
@@ -178,16 +178,11 @@ export default function LiveMap() {
   const [layers, setLayers] = React.useState<Layers>(DEFAULT_LAYERS)
   const [filter, setFilter] = React.useState<Level | "all">("all")
   const [query, setQuery] = React.useState("")
-  const [hover, setHover] = React.useState<{
-    ref: string
-    zone: string
-  } | null>(null)
+  const [hover, setHover] = React.useState<Point | null>(null)
 
   const selectedId = params.get("v")
   const selected = vehicles.find((v) => v.id === selectedId) ?? null
-  const [focus, setFocus] = React.useState<{ x: number; y: number } | null>(
-    null
-  )
+  const [focus, setFocus] = React.useState<Point | null>(null)
 
   const select = React.useCallback(
     (id: string | null, fly = false) => {
@@ -288,13 +283,12 @@ export default function LiveMap() {
         <div className="pointer-events-none absolute bottom-3 left-3 flex flex-col items-start gap-2">
           <div className="readout rounded-md border bg-card/95 px-2.5 py-1.5 text-xs shadow-sm">
             {hover ? (
-              <>
-                <span className="font-semibold">{hover.ref}</span> ·{" "}
-                {hover.zone}
-              </>
+              <span className="font-semibold">
+                {hover.lat.toFixed(4)}, {hover.lng.toFixed(4)}
+              </span>
             ) : (
               <span className="text-muted-foreground">
-                Cuadrícula · mueve el cursor
+                Coordenadas · mueve el cursor
               </span>
             )}
           </div>
@@ -304,7 +298,7 @@ export default function LiveMap() {
 
       <aside
         aria-label="Vehículos"
-        className="flex max-h-[70svh] w-full shrink-0 flex-col border-t bg-card lg:max-h-none lg:w-[360px] lg:border-t-0 lg:border-l"
+        className="flex w-full shrink-0 flex-col border-t bg-card max-lg:h-[62svh] lg:w-[360px] lg:border-t-0 lg:border-l"
       >
         <div className="flex flex-col gap-3 border-b p-3">
           <div className="relative">

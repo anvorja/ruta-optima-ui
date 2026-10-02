@@ -10,7 +10,8 @@
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc -b",
     "preview": "vite preview",
-    "format:check": "prettier --check \"**/*.{ts,tsx}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx}\"",
+    "routes:generate": "node scripts/generate-routes.ts"
   },
   "dependencies": {
     "@fontsource-variable/figtree": "^5.3.0",
@@ -18,10 +19,12 @@
     "@tailwindcss/vite": "^4",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.49.0",
     "radix-ui": "^1.6.7",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-leaflet": "^5.0.0",
     "react-router": "^8.4.0",
     "recharts": "^3.8.0",
     "shadcn": "^4.21.1",
@@ -31,6 +34,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10",
+    "@types/leaflet": "^1.9.22",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
