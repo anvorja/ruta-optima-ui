@@ -51,7 +51,6 @@ docker run --rm -p 8080:8080 ruta-optima-dashboard   # http://localhost:8080 (/h
 
 ## Pendientes
 
-- Etiquetas de «CENTRO» y «Base Central» se solapan con vehículos en la carta.
 - Marco de carta (neatline y marcas) en los paneles; tipografía con más carácter cartográfico.
 - Botones que dependen de un TMS real (importar Excel, nueva orden, editar, desactivar) solo muestran un aviso.
 - Sin pruebas automáticas todavía (unitarias ni e2e).
