@@ -10,13 +10,11 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ChartLegendKey } from "@/components/chart/legend"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { useFleet } from "@/state/fleet-live"
 import { useSettings } from "@/state/settings"
 import { cn } from "@/lib/utils"
 
 export function MapCard({ className }: { className?: string }) {
-  const isMobile = useIsMobile()
   const { vehicles, orders } = useFleet()
   const { saved } = useSettings()
   return (
@@ -47,7 +45,6 @@ export function MapCard({ className }: { className?: string }) {
       <div className="relative min-h-[360px] flex-1">
         <ChartMap
           compact
-          fit={isMobile ? "slice" : "meet"}
           vehicles={vehicles}
           orders={orders}
           thresholds={saved.thresholds}

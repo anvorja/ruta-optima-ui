@@ -269,3 +269,155 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Leaflet chart layer ─────────────────────────────────────────────────── */
+.leaflet-container {
+  background: var(--water);
+  font-family: inherit;
+  outline-offset: -2px;
+}
+.leaflet-container .leaflet-control-attribution {
+  background: color-mix(in oklch, var(--card) 88%, transparent);
+  color: var(--muted-foreground);
+  font-size: 0.625rem;
+}
+.leaflet-container .leaflet-control-attribution a {
+  color: var(--foreground);
+}
+.leaflet-tooltip.chart-tooltip {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: none;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+}
+.leaflet-tooltip.chart-tooltip::before {
+  display: none;
+}
+
+/* Paths: planned tracks, corridors, wake, XTE, isochrones */
+path.chart-corridor {
+  stroke: var(--primary);
+  stroke-opacity: 0.14;
+  stroke-width: 22px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+path.chart-corridor.sel {
+  stroke-opacity: 0.28;
+}
+path.chart-track {
+  stroke: var(--primary);
+  stroke-width: 2.4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  cursor: pointer;
+}
+path.chart-track.hot {
+  stroke-width: 3px;
+}
+path.chart-track.sel {
+  stroke-width: 4px;
+}
+path.chart-travelled {
+  stroke: var(--foreground);
+  stroke-opacity: 0.6;
+  stroke-width: 1.8px;
+  stroke-dasharray: 2 5;
+  stroke-linecap: round;
+  fill: none;
+}
+path.dim {
+  opacity: 0.28;
+}
+path.chart-xte {
+  stroke: var(--crit);
+  stroke-width: 1.8px;
+  stroke-dasharray: 4 4;
+  fill: none;
+}
+path.chart-contour {
+  stroke: var(--contour);
+  stroke-width: 1.2px;
+  stroke-dasharray: 5 3;
+  fill: var(--contour);
+  fill-opacity: 0.05;
+}
+path.chart-contour.hot {
+  stroke-dasharray: none;
+  stroke-width: 1.6px;
+  fill-opacity: 0.14;
+}
+
+/* Marker chrome (divIcons) */
+.chart-vehicle,
+.chart-stop,
+.chart-hub,
+.chart-number,
+.chart-contour-label {
+  background: none;
+  border: none;
+}
+.chart-vehicle,
+.chart-hub {
+  overflow: visible;
+}
+.chart-tag,
+.chart-hub-tag {
+  position: absolute;
+  left: 50%;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--foreground);
+  background: var(--background);
+}
+.chart-tag {
+  top: 44px;
+  transform: translateX(-50%);
+  padding: 1px 4px;
+  border: 1.4px solid;
+  border-radius: 2px;
+}
+.chart-hub-tag {
+  top: 26px;
+  transform: translateX(-50%);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+.chart-number span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: 2px solid var(--background);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.chart-contour-label span {
+  display: block;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--contour);
+  text-shadow:
+    0 0 3px var(--background),
+    0 0 3px var(--background);
+}
+
+/* Dark mode over light tiles: invert and tone down so the plan, not the basemap, leads. */
+.map-dark .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.78) contrast(0.88) saturate(0.45);
+}

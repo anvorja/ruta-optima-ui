@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/select"
 import { HUBS } from "@/data/scenery"
 import type { Point } from "@/data/types"
-import { chartRoute, KM_PER_UNIT, routeLength } from "@/lib/geo"
+import { distance, STREET_FACTOR } from "@/lib/geo"
 import { STATUS_LABEL } from "@/lib/status"
 import { windowStart } from "@/lib/format"
 import { PRIORITY } from "@/lib/orders"
@@ -54,6 +54,14 @@ type Stop = {
 }
 
 const BASE = HUBS[0].at
+
+/** Estimated driving km of a chain of points: straight legs padded by the street factor. */
+function legKm(points: Point[]): number {
+  let m = 0
+  for (let i = 1; i < points.length; i++)
+    m += distance(points[i - 1], points[i])
+  return (m * STREET_FACTOR) / 1000
+}
 const INITIAL: Stop[] = [
   {
     id: 1,
@@ -62,7 +70,7 @@ const INITIAL: Stop[] = [
     timeWindow: "10:30 - 11:00",
     priority: "alta",
     kg: 45,
-    at: { x: 690, y: 300 },
+    at: { lat: 4.6115, lng: -74.0835 },
   },
   {
     id: 2,
@@ -71,7 +79,7 @@ const INITIAL: Stop[] = [
     timeWindow: "11:00 - 12:00",
     priority: "normal",
     kg: 32,
-    at: { x: 760, y: 150 },
+    at: { lat: 4.7013, lng: -74.0414 },
   },
   {
     id: 3,
@@ -80,7 +88,7 @@ const INITIAL: Stop[] = [
     timeWindow: "11:30 - 12:30",
     priority: "urgente",
     kg: 5,
-    at: { x: 760, y: 340 },
+    at: { lat: 4.5981, lng: -74.076 },
   },
   {
     id: 4,
@@ -89,21 +97,21 @@ const INITIAL: Stop[] = [
     timeWindow: "12:00 - 13:00",
     priority: "normal",
     kg: 78,
-    at: { x: 700, y: 470 },
+    at: { lat: 4.6677, lng: -74.0545 },
   },
 ]
 
 /** Candidate drop points for newly added addresses. */
 const SPOTS: Point[] = [
-  { x: 840, y: 400 },
-  { x: 880, y: 260 },
-  { x: 600, y: 480 },
-  { x: 800, y: 500 },
-  { x: 650, y: 120 },
+  { lat: 4.6535, lng: -74.06 },
+  { lat: 4.6944, lng: -74.03 },
+  { lat: 4.6485, lng: -74.117 },
+  { lat: 4.6262, lng: -74.0654 },
+  { lat: 4.6032, lng: -74.0655 },
 ]
 
 function planLength(stops: Stop[]) {
-  return routeLength(chartRoute([BASE, ...stops.map((s) => s.at), BASE]))
+  return legKm([BASE, ...stops.map((s) => s.at), BASE])
 }
 
 const SHIFT_START = 10 * 60 + 30
@@ -122,7 +130,7 @@ function sequenceCost(seq: Stop[]): number {
   let prev = BASE
   let dist = 0
   for (const s of seq) {
-    const d = routeLength(chartRoute([prev, s.at])) * KM_PER_UNIT * 3.2
+    const d = legKm([prev, s.at])
     dist += d
     t += (d / KMH) * 60
     t = Math.max(t, windowStart(s.timeWindow))
@@ -130,7 +138,7 @@ function sequenceCost(seq: Stop[]): number {
     t += SERVICE_MIN
     prev = s.at
   }
-  dist += routeLength(chartRoute([prev, BASE])) * KM_PER_UNIT * 3.2
+  dist += legKm([prev, BASE])
   return dist + late * 100
 }
 
@@ -183,8 +191,7 @@ export default function RoutePlanner() {
 
   const shown = result ? result.order : stops
   const track = React.useMemo(
-    () =>
-      shown.length ? chartRoute([BASE, ...shown.map((s) => s.at), BASE]) : [],
+    () => (shown.length ? [BASE, ...shown.map((s) => s.at), BASE] : []),
     [shown]
   )
 
@@ -232,7 +239,7 @@ export default function RoutePlanner() {
     }, 1400)
   }
 
-  const km = result ? result.after * KM_PER_UNIT * 3.2 : 0
+  const km = result ? result.after : 0
   const minutesTotal = result
     ? Math.round((km / 28) * 60 + stops.length * 6)
     : 0

@@ -1,9 +1,8 @@
 import type { Order, Point, Vehicle } from "@/data/types"
-import { chartRoute } from "@/lib/geo"
-import { HUBS } from "@/data/scenery"
+import { ORDER_COORDS } from "@/data/places"
+import { ROUTES } from "@/data/routes.generated"
 
-const BASE = HUBS[0].at
-const BRIDGE: Point = { x: 470, y: 334 }
+const pt = ([lat, lng]: [number, number]): Point => ({ lat, lng })
 
 type OrderRow = [
   id: string,
@@ -15,8 +14,6 @@ type OrderRow = [
   vehicle: string | null,
   items: number,
   weight: string,
-  x: number,
-  y: number,
 ]
 
 const ORDER_ROWS: OrderRow[] = [
@@ -30,8 +27,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-001",
     12,
     "45 kg",
-    690,
-    300,
   ],
   [
     "ORD-2459",
@@ -43,8 +38,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-002",
     8,
     "32 kg",
-    760,
-    150,
   ],
   [
     "ORD-2460",
@@ -56,8 +49,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-001",
     3,
     "5 kg",
-    760,
-    340,
   ],
   [
     "ORD-2461",
@@ -69,8 +60,6 @@ const ORDER_ROWS: OrderRow[] = [
     null,
     15,
     "78 kg",
-    700,
-    470,
   ],
   [
     "ORD-2462",
@@ -82,8 +71,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-004",
     5,
     "12 kg",
-    900,
-    360,
   ],
   [
     "ORD-2463",
@@ -95,8 +82,6 @@ const ORDER_ROWS: OrderRow[] = [
     null,
     20,
     "95 kg",
-    560,
-    570,
   ],
   [
     "ORD-2464",
@@ -108,8 +93,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-002",
     2,
     "3 kg",
-    680,
-    200,
   ],
   [
     "ORD-2465",
@@ -121,8 +104,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-003",
     6,
     "40 kg",
-    640,
-    470,
   ],
   [
     "ORD-2466",
@@ -134,8 +115,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-003",
     4,
     "18 kg",
-    700,
-    540,
   ],
   [
     "ORD-2467",
@@ -147,8 +126,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-003",
     18,
     "110 kg",
-    790,
-    575,
   ],
   [
     "ORD-2468",
@@ -160,8 +137,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-007",
     3,
     "6 kg",
-    330,
-    300,
   ],
   [
     "ORD-2469",
@@ -173,8 +148,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-007",
     9,
     "27 kg",
-    250,
-    380,
   ],
   [
     "ORD-2470",
@@ -186,8 +159,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-001",
     14,
     "60 kg",
-    840,
-    400,
   ],
   [
     "ORD-2471",
@@ -199,8 +170,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-002",
     7,
     "21 kg",
-    850,
-    120,
   ],
   [
     "ORD-2472",
@@ -212,8 +181,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-004",
     2,
     "4 kg",
-    800,
-    300,
   ],
   [
     "ORD-2473",
@@ -225,8 +192,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-004",
     1,
     "1 kg",
-    860,
-    330,
   ],
   [
     "ORD-2474",
@@ -238,8 +203,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-008",
     11,
     "52 kg",
-    300,
-    230,
   ],
   [
     "ORD-2475",
@@ -251,8 +214,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-008",
     10,
     "26 kg",
-    200,
-    160,
   ],
   [
     "ORD-2476",
@@ -264,8 +225,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-008",
     5,
     "38 kg",
-    110,
-    240,
   ],
   [
     "ORD-2477",
@@ -277,8 +236,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-009",
     22,
     "120 kg",
-    600,
-    490,
   ],
   [
     "ORD-2478",
@@ -290,8 +247,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-009",
     8,
     "30 kg",
-    520,
-    560,
   ],
   [
     "ORD-2479",
@@ -303,8 +258,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-009",
     1,
     "1 kg",
-    450,
-    596,
   ],
   [
     "ORD-2480",
@@ -316,8 +269,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-010",
     1,
     "1 kg",
-    650,
-    340,
   ],
   [
     "ORD-2481",
@@ -329,8 +280,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-010",
     2,
     "2 kg",
-    610,
-    250,
   ],
   [
     "ORD-2482",
@@ -342,8 +291,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-011",
     40,
     "240 kg",
-    800,
-    430,
   ],
   [
     "ORD-2483",
@@ -355,8 +302,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-011",
     36,
     "310 kg",
-    880,
-    510,
   ],
   [
     "ORD-2484",
@@ -368,8 +313,6 @@ const ORDER_ROWS: OrderRow[] = [
     "V-011",
     25,
     "200 kg",
-    930,
-    570,
   ],
 ]
 
@@ -384,8 +327,6 @@ export const ORDERS: Order[] = ORDER_ROWS.map(
     vehicle,
     items,
     weight,
-    x,
-    y,
   ]) => ({
     id,
     customer,
@@ -396,19 +337,11 @@ export const ORDERS: Order[] = ORDER_ROWS.map(
     vehicle,
     items,
     weight,
-    at: { x, y },
+    at: pt(ORDER_COORDS[id]),
   })
 )
 
-const ORDER_BY_ID = new Map(ORDERS.map((o) => [o.id, o]))
-
-/** Planned 45°/90° track: base → bridge (west side only) → each stop. */
-function planRoute(orderIds: string[], viaBridge = false): Point[] {
-  const stops = orderIds.map((id) => ORDER_BY_ID.get(id)!.at)
-  return chartRoute([BASE, ...(viaBridge ? [BRIDGE] : []), ...stops])
-}
-
-type V = Omit<Vehicle, "route"> & { via?: boolean }
+type V = Omit<Vehicle, "route">
 
 const VEHICLE_ROWS: V[] = [
   {
@@ -550,7 +483,6 @@ const VEHICLE_ROWS: V[] = [
     etaMin: 21,
     stoppedMin: 0,
     orders: ["ORD-2468", "ORD-2469"],
-    via: true,
   },
   {
     id: "V-008",
@@ -571,7 +503,6 @@ const VEHICLE_ROWS: V[] = [
     etaMin: 12,
     stoppedMin: 0,
     orders: ["ORD-2474", "ORD-2475", "ORD-2476"],
-    via: true,
   },
   {
     id: "V-009",
@@ -715,12 +646,10 @@ const VEHICLE_ROWS: V[] = [
   },
 ]
 
-export const INITIAL_VEHICLES: Vehicle[] = VEHICLE_ROWS.map(
-  ({ via, ...v }) => ({
-    ...v,
-    route: v.orders.length ? planRoute(v.orders, via) : [],
-  })
-)
+export const INITIAL_VEHICLES: Vehicle[] = VEHICLE_ROWS.map((v) => ({
+  ...v,
+  route: (ROUTES[v.id] ?? []).map(pt),
+}))
 
 export const TOTAL_FLEET = INITIAL_VEHICLES.length
 

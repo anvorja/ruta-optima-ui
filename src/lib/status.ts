@@ -1,3 +1,4 @@
+import { CENTRO_AT } from "@/data/scenery"
 import type { Level, Notice, Order, Vehicle } from "@/data/types"
 
 export type Thresholds = {
@@ -137,7 +138,7 @@ export function deriveNotices(
       level: "risk",
       title: "Congestión en Zona Centro",
       detail: "Ruta A-15 · +15 min estimados sobre el plan",
-      at: { x: 650, y: 322 },
+      at: CENTRO_AT,
       action: "Ver en carta",
       ageMin: 14,
     })

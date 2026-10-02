@@ -140,7 +140,7 @@ Density is instrument-level: small type (12-14px), 32px controls, hairline separ
 - Hairline borders and tonal steps; no shadows at rest.
 - Mono tabular readouts with fixed decimals; Figtree for everything else.
 - Tick scales and diamond markers for plan-versus-actual.
-- Tracks bend at 45 and 90 degrees only; hubs are squares.
+- Planned tracks follow real streets on the basemap (OpenStreetMap tiles; darkened in night mode); hubs are squares. The 45/90 angle rule applies only to schematic diagrams, not to the map.
 
 ## Colors
 
@@ -204,7 +204,7 @@ Flat and tonal. Depth is conveyed by lightness steps (abyss, panel, panel raised
 
 ## Shapes
 
-Small, instrument-like corners: base radius 6px; controls and inputs use 4.8px, pills and chips 3.6px, cards 6px. Full-round appears only on dots and the switch thumb. Borders are 1px hairline. Chart geometry is angular: tracks run at 45 and 90 degrees only with round joins, hubs and interchanges are squares, ownship vehicles are symbols with a heading vector, and the corridor is a dashed band around the planned track. The brand mark is that grammar in one glyph: a magenta track bending at 45 degrees into a hub square.
+Small, instrument-like corners: base radius 6px; controls and inputs use 4.8px, pills and chips 3.6px, cards 6px. Full-round appears only on dots and the switch thumb. Borders are 1px hairline. Chart geometry sits on a real basemap: planned tracks follow real streets with round joins, hubs and interchanges are squares, ownship vehicles are symbols with a heading vector, and the corridor is a dashed band around the planned track. The brand mark is that grammar in one glyph: a magenta track bending at 45 degrees into a hub square.
 
 ## Components
 
@@ -235,7 +235,7 @@ Replaces progress bars for plan-versus-actual. A 1px baseline with 21 ticks (maj
 Six readouts in a row (label, mono value with unit, delta, tick scale), separated by hairlines, not cards. Avisos is an ordered list ranked by impact: state mark, sr-only level word, title, detail, then its action button; critical rows carry the faint crit tint and a magenta action, risk rows an outline action.
 
 ### Chart
-Water ground with graticule, dimmed land, road lines, contour isochrones for delay, planned tracks in magenta inside a dashed corridor, wakes as dotted trails, ownship symbols with heading vectors, hubs as squares. Beacon animation uses stepped blinking (`steps(1)`), a light-characteristic rhythm rather than a smooth pulse.
+Real basemap (OpenStreetMap tiles, darkened by a CSS filter in night mode), contour isochrones for delay as circles, planned tracks in magenta inside a dashed corridor, wakes as dotted trails, ownship symbols with heading vectors, hubs as squares. Beacon animation uses stepped blinking (`steps(1)`), a light-characteristic rhythm rather than a smooth pulse.
 
 ## Do's and Don'ts
 
@@ -244,7 +244,7 @@ Water ground with graticule, dimmed land, road lines, contour isochrones for del
 - **Do** use magenta only for planned tracks, selection, focus, and the single primary action.
 - **Do** set measured values in `.readout` and show freshness and source beside live data; label sample data as sample.
 - **Do** compare plan to actual with a Tick Scale and a target annotation.
-- **Do** draw new tracks and connectors at 45 or 90 degrees with round joins and square hubs.
+- **Do** draw new tracks along real streets with round joins and square hubs; use 45 or 90 degrees only in schematic diagrams.
 - **Do** build new surfaces from the semantic tokens so day and night both work, and respect reduced motion.
 
 ### Don't:

@@ -1,4 +1,5 @@
-export type Point = { x: number; y: number }
+/** Geographic position (WGS84). */
+export type Point = { lat: number; lng: number }
 
 /** Light characteristics: every state has a fixed colour, shape and label. */
 export type Level = "ok" | "risk" | "crit" | "idle"
@@ -24,7 +25,7 @@ export type Vehicle = {
   fuel: number
   consumption: string
   lastMaintenance: string
-  /** Planned track in chart space (45°/90° legs). Empty when not routed. */
+  /** Planned track following real streets. Empty when not routed. */
   route: Point[]
   /** 0..1 along the planned track. */
   progress: number
@@ -56,7 +57,7 @@ export type Order = {
   vehicle: string | null
   items: number
   weight: string
-  /** Position of the drop on the chart. */
+  /** Position of the drop. */
   at: Point
 }
 

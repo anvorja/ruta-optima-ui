@@ -42,6 +42,16 @@ Dirección visual: carta náutica nocturna. Ver `PRODUCT.md` (producto) y `DESIG
 - CI (`.github/workflows/ci.yml`): prettier, tsc, eslint, build, auditoría de dependencias y prueba de humo de la imagen Docker.
 - La app es un SPA estático sin variables de entorno ni secretos. `.env*` está ignorado; no subas credenciales.
 
+## Mapa
+
+La carta usa Leaflet sobre Bogotá (`src/components/chart/chart-map.tsx`). Las coordenadas de ejemplo están en `src/data/places.ts` y las rutas por calles en `src/data/routes.generated.ts`, generadas con OSRM (datos de OpenStreetMap, ODbL):
+
+```bash
+pnpm routes:generate   # usa el servidor demo público de OSRM: solo para desarrollo
+```
+
+Teselas: por defecto OpenStreetMap estándar (sin clave, solo uso ligero; en modo noche se oscurece con un filtro CSS). Para producción configura un proveedor propio con las variables `VITE_TILE_URL_DARK`, `VITE_TILE_URL_LIGHT` y `VITE_TILE_ATTRIBUTION` (ver `.env.example`). Son valores públicos: no pongas secretos; si el proveedor exige clave, restríngela por dominio. El cálculo de rutas real (OSRM propio, Valhalla o el TMS) queda por conectar.
+
 ## Docker
 
 ```bash
@@ -51,7 +61,8 @@ docker run --rm -p 8080:8080 ruta-optima-dashboard   # http://localhost:8080 (/h
 
 ## Pendientes
 
-- Marco de carta (neatline y marcas) en los paneles; tipografía con más carácter cartográfico.
+- Marco de carta en los paneles y tipografía con más carácter cartográfico.
+- Teselas y rutas de producción (ver «Mapa»); la vista previa del planificador traza rectas entre paradas, no calles.
 - Botones que dependen de un TMS real (importar Excel, nueva orden, editar, desactivar) solo muestran un aviso.
 - Sin pruebas automáticas todavía (unitarias ni e2e).
 - Despliegue: sin publicación de imagen ni destino definidos (Docker Hub, Render u otro). Ver `../referencia-github-api-drinks` como base.

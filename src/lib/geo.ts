@@ -1,28 +1,45 @@
 import type { Point } from "@/data/types"
 
-export const CHART_W = 1000
-export const CHART_H = 640
+const R = 6371008.8 // mean Earth radius, metres
+const rad = (d: number) => (d * Math.PI) / 180
+
+/** Great-circle distance in metres. */
+export function distance(a: Point, b: Point): number {
+  const dLat = rad(b.lat - a.lat)
+  const dLng = rad(b.lng - a.lng)
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2
+  return 2 * R * Math.asin(Math.sqrt(h))
+}
+
+/** Initial bearing in degrees (0 = north, clockwise). */
+export function bearing(a: Point, b: Point): number {
+  const y = Math.sin(rad(b.lng - a.lng)) * Math.cos(rad(b.lat))
+  const x =
+    Math.cos(rad(a.lat)) * Math.sin(rad(b.lat)) -
+    Math.sin(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.cos(rad(b.lng - a.lng))
+  return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360
+}
 
 export function segLengths(route: Point[]): number[] {
   const out: number[] = []
-  for (let i = 1; i < route.length; i++) {
-    out.push(
-      Math.hypot(route[i].x - route[i - 1].x, route[i].y - route[i - 1].y)
-    )
-  }
+  for (let i = 1; i < route.length; i++)
+    out.push(distance(route[i - 1], route[i]))
   return out
 }
 
-export function routeLength(route: Point[]): number {
-  return segLengths(route).reduce((a, b) => a + b, 0)
+/** Route length in kilometres. */
+export function routeLengthKm(route: Point[]): number {
+  return segLengths(route).reduce((a, b) => a + b, 0) / 1000
 }
 
-/** Position and heading (degrees, 0 = up, clockwise) at fraction t of a route. */
+/** Position and heading at fraction t (0..1) of a route, by distance travelled. */
 export function pointAt(
   route: Point[],
   t: number
 ): { p: Point; heading: number } {
-  if (route.length === 0) return { p: { x: 0, y: 0 }, heading: 0 }
+  if (route.length === 0) return { p: { lat: 0, lng: 0 }, heading: 0 }
   if (route.length === 1) return { p: route[0], heading: 0 }
   const lens = segLengths(route)
   const total = lens.reduce((a, b) => a + b, 0)
@@ -32,10 +49,12 @@ export function pointAt(
       const f = lens[i] === 0 ? 0 : Math.min(d / lens[i], 1)
       const a = route[i]
       const b = route[i + 1]
-      const heading = (Math.atan2(b.x - a.x, -(b.y - a.y)) * 180) / Math.PI
       return {
-        p: { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f },
-        heading: (heading + 360) % 360,
+        p: {
+          lat: a.lat + (b.lat - a.lat) * f,
+          lng: a.lng + (b.lng - a.lng) * f,
+        },
+        heading: bearing(a, b),
       }
     }
     d -= lens[i]
@@ -43,7 +62,7 @@ export function pointAt(
   return { p: route[route.length - 1], heading: 0 }
 }
 
-/** Sub-route between fractions a and b (used for the wake behind a vehicle). */
+/** Sub-route between fractions a and b (the wake behind a vehicle). */
 export function slice(route: Point[], a: number, b: number): Point[] {
   const lens = segLengths(route)
   const total = lens.reduce((x, y) => x + y, 0)
@@ -60,42 +79,10 @@ export function slice(route: Point[], a: number, b: number): Point[] {
   return pts
 }
 
-export function toPath(points: Point[]): string {
-  return points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x} ${p.y}`).join(" ")
-}
+export const toTuples = (route: Point[]): [number, number][] =>
+  route.map((p) => [p.lat, p.lng])
 
-/**
- * Orthogonal-with-45° routing between two points: one diagonal leg, one straight
- * leg. Used for plotted tracks so every bend is 45° or 90°.
- */
-export function chartRoute(points: Point[]): Point[] {
-  if (points.length < 2) return points
-  const out: Point[] = [points[0]]
-  for (let i = 1; i < points.length; i++) {
-    const a = out[out.length - 1]
-    const b = points[i]
-    const dx = b.x - a.x
-    const dy = b.y - a.y
-    const diag = Math.min(Math.abs(dx), Math.abs(dy))
-    if (diag > 0 && Math.abs(dx) !== Math.abs(dy)) {
-      // straight first along the long axis, then diagonal
-      if (Math.abs(dx) > Math.abs(dy)) {
-        out.push({ x: b.x - Math.sign(dx) * diag, y: a.y })
-      } else {
-        out.push({ x: a.x, y: b.y - Math.sign(dy) * diag })
-      }
-    }
-    out.push(b)
-  }
-  return out
-}
+export const toPoint = ([lat, lng]: [number, number]): Point => ({ lat, lng })
 
-/** Grid reference like "D4" for a chart point (10 columns × 6 rows). */
-export function gridRef(p: Point): string {
-  const col = Math.min(9, Math.max(0, Math.floor(p.x / (CHART_W / 10))))
-  const row = Math.min(5, Math.max(0, Math.floor(p.y / (CHART_H / 6))))
-  return `${String.fromCharCode(65 + col)}${row + 1}`
-}
-
-/** Chart units → kilometres (one grid cell is ~1.5 km). */
-export const KM_PER_UNIT = 1.5 / 100
+/** Straight-line distance padded for street layout: a planning estimate, not a route. */
+export const STREET_FACTOR = 1.35
