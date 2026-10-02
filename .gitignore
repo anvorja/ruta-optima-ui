@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment and secrets: never commit
+.env
+.env.*
+!.env.example
+
+# Local tooling output
+.impeccable/review/
+.impeccable/hook.cache.json
+.playwright-mcp/
+
+# Personal notes
+nota_importante.txt

@@ -1,20 +1,38 @@
-import { Button } from "@/components/ui/button"
+import { lazy } from "react"
+import { BrowserRouter, Route, Routes } from "react-router"
+import { AppShell } from "@/components/layout/app-shell"
+import { FleetProvider } from "@/state/fleet-live"
+import { SettingsProvider } from "@/state/settings"
+const Dashboard = lazy(() => import("@/pages/Dashboard"))
+
+const RoutePlanner = lazy(() => import("@/pages/RoutePlanner"))
+const Orders = lazy(() => import("@/pages/Orders"))
+const Fleet = lazy(() => import("@/pages/Fleet"))
+const Analytics = lazy(() => import("@/pages/Analytics"))
+const LiveMap = lazy(() => import("@/pages/LiveMap"))
+const Settings = lazy(() => import("@/pages/Settings"))
+const NotFound = lazy(() => import("@/pages/NotFound"))
 
 export function App() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
+    <SettingsProvider>
+      <FleetProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<AppShell />}>
+              <Route index element={<Dashboard />} />
+              <Route path="routes" element={<RoutePlanner />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="fleet" element={<Fleet />} />
+              <Route path="live-map" element={<LiveMap />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </FleetProvider>
+    </SettingsProvider>
   )
 }
 
