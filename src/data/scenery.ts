@@ -43,9 +43,9 @@ export const BRIDGES: [Point, Point][] = [
 export const ZONES: { name: Zone; at: Point }[] = [
   { name: "Norte", at: { x: 740, y: 96 } },
   { name: "Oeste", at: { x: 170, y: 330 } },
-  { name: "Centro", at: { x: 650, y: 322 } },
+  { name: "Centro", at: { x: 598, y: 298 } },
   { name: "Este", at: { x: 890, y: 300 } },
-  { name: "Sur", at: { x: 700, y: 566 } },
+  { name: "Sur", at: { x: 830, y: 604 } },
 ]
 
 export const HUBS: {

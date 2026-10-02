@@ -435,25 +435,6 @@ export function ChartMap({
           </g>
         )}
 
-        {/* Zone names (italic, as on a chart) */}
-        {showNames &&
-          ZONES.map((z) => (
-            <text
-              key={z.name}
-              x={z.at.x}
-              y={z.at.y}
-              fontSize={15 * u}
-              fontStyle="italic"
-              letterSpacing="0.14em"
-              textAnchor="middle"
-              fill="var(--muted-foreground)"
-              opacity="0.8"
-              style={{ textTransform: "uppercase" }}
-            >
-              {z.name}
-            </text>
-          ))}
-
         {/* Hubs: depots are squares */}
         {HUBS.map((h) => (
           <g key={h.id} transform={`translate(${h.at.x} ${h.at.y})`}>
@@ -471,20 +452,6 @@ export function ChartMap({
               stroke="var(--foreground)"
               strokeWidth={2 * u}
             />
-            {showNames && (
-              <text
-                x={14 * u}
-                y={4 * u}
-                fontSize={11 * u}
-                fill="var(--foreground)"
-                fontWeight="600"
-                stroke="var(--land)"
-                strokeWidth={3 * u}
-                paintOrder="stroke"
-              >
-                {h.name}
-              </text>
-            )}
           </g>
         ))}
 
@@ -747,6 +714,48 @@ export function ChartMap({
             </g>
           )
         })}
+
+        {/* Names on the top layer with a halo, so tracks and vehicles never print over them */}
+        {showNames && (
+          <g pointerEvents="none">
+            {ZONES.map((z) => (
+              <text
+                key={z.name}
+                x={z.at.x}
+                y={z.at.y}
+                fontSize={15 * u}
+                fontStyle="italic"
+                letterSpacing="0.14em"
+                textAnchor="middle"
+                fill="var(--muted-foreground)"
+                stroke="var(--land)"
+                strokeWidth={4 * u}
+                strokeLinejoin="round"
+                paintOrder="stroke"
+                style={{ textTransform: "uppercase" }}
+              >
+                {z.name}
+              </text>
+            ))}
+            {HUBS.map((h) => (
+              <text
+                key={h.id}
+                x={h.at.x - 12 * u}
+                y={h.at.y + 24 * u}
+                textAnchor="end"
+                fontSize={11 * u}
+                fill="var(--foreground)"
+                fontWeight="600"
+                stroke="var(--land)"
+                strokeWidth={4 * u}
+                strokeLinejoin="round"
+                paintOrder="stroke"
+              >
+                {h.name}
+              </text>
+            ))}
+          </g>
+        )}
 
         {/* Frame, grid refs and scale bar */}
         {!compact && (
